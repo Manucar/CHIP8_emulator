@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <time.h>
 
 #include "chip8_defines.h"
@@ -25,6 +24,11 @@ uint8_t fontset[FONTSET_SIZE] =
 	0xF0, 0x80, 0xF0, 0x80, 0x80  // F
 };
 
+/**
+ * @brief Initialize main memory block of the chip8
+ * 
+ * @param chip8 
+ */
 void init_chip8(struct CHIP8 *chip8){
 	// Init PC to first usable address
 	chip8->pc = START_ADDRESS;
@@ -40,6 +44,13 @@ void init_chip8(struct CHIP8 *chip8){
 
 }
 
+
+/**
+ * @brief Load the content of the loaded ROM in the memory area of the chip8.
+ * 
+ * @param rom_path 
+ * @param chip8 
+ */
 void load_rom(char *rom_path, struct CHIP8 *chip8){
 
 	FILE *fptr;
@@ -85,7 +96,7 @@ int main(int argc, char *argv[])
 	
 	init_chip8(&chip8);
 
-	// Load given ROM in to memory block
+	// Load given ROM into memory area
 	load_rom(argv[1], &chip8);
 	
     return 0;

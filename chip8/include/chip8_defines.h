@@ -1,6 +1,7 @@
 #ifndef __CHIP8_DEFINES__
 #define __CHIP8_DEFINES__
 #include <stdint.h>
+#include <stdlib.h>
 #include <string.h>
 
 #define START_ADDRESS 0x200
