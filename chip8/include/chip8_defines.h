@@ -8,6 +8,8 @@
 #define FONTSET_START_ADDRESS 0x50
 
 #define FONTSET_SIZE  80
+#define VIDEO_WIDTH 64
+#define VIDEO_HEIGHT 32
 
 // CHIP8 Structure
 struct CHIP8 {
@@ -20,7 +22,7 @@ struct CHIP8 {
 	uint8_t delayTimer;
 	uint8_t soundTimer;
 	uint8_t keypad[16];
-	uint32_t video[64 * 32];
+	uint32_t video[VIDEO_WIDTH * VIDEO_HEIGHT];
 	uint16_t opcode;
 };
 

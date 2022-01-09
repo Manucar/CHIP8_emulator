@@ -39,11 +39,13 @@ void init_chip8(struct CHIP8 *chip8){
 		chip8->memory[FONTSET_START_ADDRESS + i] = fontset[i];
 	}
 
+	// Init blank screen
+	memset(chip8->video, 0, sizeof(chip8->video));
+
 	// Init random number generator
 	srand(time(NULL));
 
 }
-
 
 /**
  * @brief Load the content of the loaded ROM in the memory area of the chip8.
