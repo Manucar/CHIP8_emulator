@@ -1,5 +1,6 @@
 #ifndef __CHIP8_DEFINES__
 #define __CHIP8_DEFINES__
+
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,7 +12,10 @@
 #define VIDEO_WIDTH 64
 #define VIDEO_HEIGHT 32
 
-// CHIP8 Structure
+/**
+ * @brief CHIP8 structure
+ * 
+ */
 struct CHIP8 {
 	uint8_t registers[16];
 	uint8_t memory[4096];

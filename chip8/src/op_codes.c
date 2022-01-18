@@ -1,11 +1,13 @@
+#include "op_codes.h"
 #include "chip8_defines.h"
 
+
 /**
- * @brief CLS - Clear the display
+ * @brief CLS - Clear the display.
  * 
  * @param chip8 
  */
-void chip8_CLS_00E0(struct CHIP8 *chip8)
+void OP_00E0(struct CHIP8 *chip8)
 {
 	memset(chip8->video, 0, sizeof(chip8->video));
 }
@@ -15,7 +17,7 @@ void chip8_CLS_00E0(struct CHIP8 *chip8)
  * 
  * @param chip8 
  */
-void chip8_RET_00EE(struct CHIP8 *chip8)
+void OP_00EE(struct CHIP8 *chip8)
 {
 	chip8->sp--;
 	chip8->pc = chip8->stack[chip8->sp];
@@ -27,7 +29,7 @@ void chip8_RET_00EE(struct CHIP8 *chip8)
  * @param chip8 
  * @param opcode 
  */
-void chip8_JP_1nnn(struct CHIP8 *chip8, uint16_t opcode)
+void OP_1nnn(struct CHIP8 *chip8, uint16_t opcode)
 {
 	chip8->pc = opcode & 0x0FFF;
 }
@@ -38,7 +40,7 @@ void chip8_JP_1nnn(struct CHIP8 *chip8, uint16_t opcode)
  * @param chip8 
  * @param opcode 
  */
-void chip8_CALL_2nnn(struct CHIP8 *chip8, uint16_t opcode)
+void OP_2nnn(struct CHIP8 *chip8, uint16_t opcode)
 {
 	chip8->stack[chip8->sp] = chip8->pc;
 	chip8->sp++;
@@ -51,7 +53,7 @@ void chip8_CALL_2nnn(struct CHIP8 *chip8, uint16_t opcode)
  * @param chip8 
  * @param opcode
  */
-void chip8_SE_3xkk(struct CHIP8 *chip8, uint16_t opcode)
+void OP_3xkk(struct CHIP8 *chip8, uint16_t opcode)
 {
 	uint8_t value = (uint8_t)(opcode & 0x00FF);
 	uint8_t reg = (uint8_t)(opcode >> 8) & 0x0F;
@@ -68,7 +70,7 @@ void chip8_SE_3xkk(struct CHIP8 *chip8, uint16_t opcode)
  * @param chip8 
  * @param opcode
  */
-void chip8_SNE_4xkk(struct CHIP8 *chip8, uint16_t opcode)
+void OP_4xkk(struct CHIP8 *chip8, uint16_t opcode)
 {
 	uint8_t value = (uint8_t)(opcode & 0x00FF);
 	uint8_t reg = (uint8_t)(opcode >> 8) & 0x0F;
@@ -85,7 +87,7 @@ void chip8_SNE_4xkk(struct CHIP8 *chip8, uint16_t opcode)
  * @param chip8 
  * @param opcode
  */
-void chip8_SE_5xy0(struct CHIP8 *chip8, uint16_t opcode)
+void OP_5xy0(struct CHIP8 *chip8, uint16_t opcode)
 {
 	uint8_t Vx = (uint8_t)(opcode >> 8) & 0x0F;
 	uint8_t Vy = (uint8_t)(opcode & 0x00F0);
@@ -102,7 +104,7 @@ void chip8_SE_5xy0(struct CHIP8 *chip8, uint16_t opcode)
  * @param chip8 
  * @param opcode
  */
-void chip8_LD_6xkk(struct CHIP8 *chip8, uint16_t opcode)
+void OP_6xkk(struct CHIP8 *chip8, uint16_t opcode)
 {
 	uint8_t Vx = (uint8_t)(opcode >> 8) & 0x0F;
 	uint8_t value = (uint8_t)(opcode & 0x00FF);
@@ -116,7 +118,7 @@ void chip8_LD_6xkk(struct CHIP8 *chip8, uint16_t opcode)
  * @param chip8 
  * @param opcode
  */
-void chip8_ADD_7xkk(struct CHIP8 *chip8, uint16_t opcode)
+void OP_7xkk(struct CHIP8 *chip8, uint16_t opcode)
 {
 	uint8_t Vx = (uint8_t)(opcode >> 8) & 0x0F;
 	uint8_t value = (uint8_t)(opcode & 0x00FF);
@@ -130,7 +132,7 @@ void chip8_ADD_7xkk(struct CHIP8 *chip8, uint16_t opcode)
  * @param chip8 
  * @param opcode
  */
-void chip8_LD_8xy0(struct CHIP8 *chip8, uint16_t opcode)
+void OP_8xy0(struct CHIP8 *chip8, uint16_t opcode)
 {
 	uint8_t Vx = (uint8_t)(opcode >> 8) & 0x0F;
 	uint8_t Vy = (uint8_t)(opcode & 0x00F0);
@@ -144,7 +146,7 @@ void chip8_LD_8xy0(struct CHIP8 *chip8, uint16_t opcode)
  * @param chip8 
  * @param opcode
  */
-void chip8_OR_8xy1(struct CHIP8 *chip8, uint16_t opcode)
+void OP_8xy1(struct CHIP8 *chip8, uint16_t opcode)
 {
 	uint8_t Vx = (uint8_t)(opcode >> 8) & 0x0F;
 	uint8_t Vy = (uint8_t)(opcode & 0x00F0);
@@ -158,7 +160,7 @@ void chip8_OR_8xy1(struct CHIP8 *chip8, uint16_t opcode)
  * @param chip8 
  * @param opcode
  */
-void chip8_AND_8xy2(struct CHIP8 *chip8, uint16_t opcode)
+void OP_8xy2(struct CHIP8 *chip8, uint16_t opcode)
 {
 	uint8_t Vx = (uint8_t)(opcode >> 8) & 0x0F;
 	uint8_t Vy = (uint8_t)(opcode & 0x00F0);
@@ -172,7 +174,7 @@ void chip8_AND_8xy2(struct CHIP8 *chip8, uint16_t opcode)
  * @param chip8 
  * @param opcode
  */
-void chip8_XOR_8xy3(struct CHIP8 *chip8, uint16_t opcode)
+void OP_8xy3(struct CHIP8 *chip8, uint16_t opcode)
 {
 	uint8_t Vx = (uint8_t)(opcode >> 8) & 0x0F;
 	uint8_t Vy = (uint8_t)(opcode & 0x00F0);
@@ -186,7 +188,7 @@ void chip8_XOR_8xy3(struct CHIP8 *chip8, uint16_t opcode)
  * @param chip8 
  * @param opcode
  */
-void chip8_ADD_8xy4(struct CHIP8 *chip8, uint16_t opcode)
+void OP_8xy4(struct CHIP8 *chip8, uint16_t opcode)
 {
 	uint8_t Vx = (uint8_t)(opcode >> 8) & 0x0F;
 	uint8_t Vy = (uint8_t)(opcode & 0x00F0);
@@ -207,7 +209,7 @@ void chip8_ADD_8xy4(struct CHIP8 *chip8, uint16_t opcode)
  * @param chip8 
  * @param opcode
  */
-void chip8_SUB_8xy5(struct CHIP8 *chip8, uint16_t opcode)
+void OP_8xy5(struct CHIP8 *chip8, uint16_t opcode)
 {
 	uint8_t Vx = (uint8_t)(opcode >> 8) & 0x0F;
 	uint8_t Vy = (uint8_t)(opcode & 0x00F0);
@@ -229,7 +231,7 @@ void chip8_SUB_8xy5(struct CHIP8 *chip8, uint16_t opcode)
  * @param chip8 
  * @param opcode
  */
-void chip8_SHR_8xy6(struct CHIP8 *chip8, uint16_t opcode)
+void OP_8xy6(struct CHIP8 *chip8, uint16_t opcode)
 {
 	uint8_t Vx = (uint8_t)(opcode >> 8) & 0x0F;
 
@@ -243,7 +245,7 @@ void chip8_SHR_8xy6(struct CHIP8 *chip8, uint16_t opcode)
  * @param chip8 
  * @param opcode
  */
-void chip8_SUBN_8xy7(struct CHIP8 *chip8, uint16_t opcode)
+void OP_8xy7(struct CHIP8 *chip8, uint16_t opcode)
 {
 	uint8_t Vx = (uint8_t)(opcode >> 8) & 0x0F;
 	uint8_t Vy = (uint8_t)(opcode & 0x00F0);
@@ -265,7 +267,7 @@ void chip8_SUBN_8xy7(struct CHIP8 *chip8, uint16_t opcode)
  * @param chip8 
  * @param opcode
  */
-void chip8_SHL_8xyE(struct CHIP8 *chip8, uint16_t opcode)
+void OP_8xyE(struct CHIP8 *chip8, uint16_t opcode)
 {
 	uint8_t Vx = (uint8_t)(opcode >> 8) & 0x0F;
 
@@ -279,7 +281,7 @@ void chip8_SHL_8xyE(struct CHIP8 *chip8, uint16_t opcode)
  * @param chip8 
  * @param opcode
  */
-void chip8_SNE_9xy0(struct CHIP8 *chip8, uint16_t opcode)
+void OP_9xy0(struct CHIP8 *chip8, uint16_t opcode)
 {
 	uint8_t Vx = (uint8_t)(opcode >> 8) & 0x0F;
 	uint8_t Vy = (uint8_t)(opcode & 0x00F0);
@@ -296,7 +298,7 @@ void chip8_SNE_9xy0(struct CHIP8 *chip8, uint16_t opcode)
  * @param chip8 
  * @param opcode
  */
-void chip8_LD_Annn(struct CHIP8 *chip8, uint16_t opcode)
+void OP_Annn(struct CHIP8 *chip8, uint16_t opcode)
 {
 	chip8->index = opcode & 0x0FFF;
 }
@@ -307,7 +309,7 @@ void chip8_LD_Annn(struct CHIP8 *chip8, uint16_t opcode)
  * @param chip8 
  * @param opcode
  */
-void chip8_JP_Bnnn(struct CHIP8 *chip8, uint16_t opcode)
+void OP_Bnnn(struct CHIP8 *chip8, uint16_t opcode)
 {
 	chip8->pc = (opcode & 0x0FFF) + chip8->registers[0x0];
 }
@@ -318,7 +320,7 @@ void chip8_JP_Bnnn(struct CHIP8 *chip8, uint16_t opcode)
  * @param chip8 
  * @param opcode
  */
-void chip8_RND_Cxkk(struct CHIP8 *chip8, uint16_t opcode)
+void OP_Cxkk(struct CHIP8 *chip8, uint16_t opcode)
 {
 	uint8_t Vx = (uint8_t)(opcode >> 8) & 0x0F;
 	uint8_t kk = (uint8_t)(opcode & 0x00FF);
@@ -332,7 +334,7 @@ void chip8_RND_Cxkk(struct CHIP8 *chip8, uint16_t opcode)
  * @param chip8 
  * @param opcode
  */
-void chip8_DRW_Dxyn(struct CHIP8 *chip8, uint16_t opcode)
+void OP_Dxyn(struct CHIP8 *chip8, uint16_t opcode)
 {
 	uint8_t Vx = (uint8_t)(opcode >> 8) & 0x0F;
 	uint8_t Vy = (uint8_t)(opcode & 0x00F0);
@@ -378,7 +380,7 @@ void chip8_DRW_Dxyn(struct CHIP8 *chip8, uint16_t opcode)
  * @param chip8 
  * @param opcode
  */
-void chip8_SKP_Ex9E(struct CHIP8 *chip8, uint16_t opcode)
+void OP_Ex9E(struct CHIP8 *chip8, uint16_t opcode)
 {
 	uint8_t Vx = (uint8_t)(opcode >> 8) & 0x0F;
 
@@ -394,7 +396,7 @@ void chip8_SKP_Ex9E(struct CHIP8 *chip8, uint16_t opcode)
  * @param chip8 
  * @param opcode
  */
-void chip8_SKNP_ExA1(struct CHIP8 *chip8, uint16_t opcode)
+void OP_ExA1(struct CHIP8 *chip8, uint16_t opcode)
 {
 	uint8_t Vx = (uint8_t)(opcode >> 8) & 0x0F;
 
@@ -410,7 +412,7 @@ void chip8_SKNP_ExA1(struct CHIP8 *chip8, uint16_t opcode)
  * @param chip8 
  * @param opcode
  */
-void chip8_LD_Fx07(struct CHIP8 *chip8, uint16_t opcode)
+void OP_Fx07(struct CHIP8 *chip8, uint16_t opcode)
 {
 	uint8_t Vx = (uint8_t)(opcode >> 8) & 0x0F;
 
@@ -423,7 +425,7 @@ void chip8_LD_Fx07(struct CHIP8 *chip8, uint16_t opcode)
  * @param chip8 
  * @param opcode
  */
-void chip8_LD_Fx0A(struct CHIP8 *chip8, uint16_t opcode)
+void OP_Fx0A(struct CHIP8 *chip8, uint16_t opcode)
 {
 	uint8_t Vx = (uint8_t)(opcode >> 8) & 0x0F;
 
@@ -504,7 +506,7 @@ void chip8_LD_Fx0A(struct CHIP8 *chip8, uint16_t opcode)
  * @param chip8 
  * @param opcode
  */
-void chip8_LD_Fx15(struct CHIP8 *chip8, uint16_t opcode)
+void OP_Fx15(struct CHIP8 *chip8, uint16_t opcode)
 {
 	uint8_t Vx = (uint8_t)(opcode >> 8) & 0x0F;
 
@@ -517,7 +519,7 @@ void chip8_LD_Fx15(struct CHIP8 *chip8, uint16_t opcode)
  * @param chip8 
  * @param opcode
  */
-void chip8_LD_Fx18(struct CHIP8 *chip8, uint16_t opcode)
+void OP_Fx18(struct CHIP8 *chip8, uint16_t opcode)
 {
 	uint8_t Vx = (uint8_t)(opcode >> 8) & 0x0F;
 
@@ -530,7 +532,7 @@ void chip8_LD_Fx18(struct CHIP8 *chip8, uint16_t opcode)
  * @param chip8 
  * @param opcode
  */
-void chip8_ADD_Fx1E(struct CHIP8 *chip8, uint16_t opcode)
+void OP_Fx1E(struct CHIP8 *chip8, uint16_t opcode)
 {
 	uint8_t Vx = (uint8_t)(opcode >> 8) & 0x0F;
 
@@ -543,7 +545,7 @@ void chip8_ADD_Fx1E(struct CHIP8 *chip8, uint16_t opcode)
  * @param chip8 
  * @param opcode
  */
-void chip8_LD_Fx29(struct CHIP8 *chip8, uint16_t opcode)
+void OP_Fx29(struct CHIP8 *chip8, uint16_t opcode)
 {
 	uint8_t Vx = (uint8_t)(opcode >> 8) & 0x0F;
 
@@ -556,7 +558,7 @@ void chip8_LD_Fx29(struct CHIP8 *chip8, uint16_t opcode)
  * @param chip8 
  * @param opcode
  */
-void chip8_LD_Fx33(struct CHIP8 *chip8, uint16_t opcode)
+void OP_Fx33(struct CHIP8 *chip8, uint16_t opcode)
 {
 	uint8_t Vx = (uint8_t)(opcode >> 8) & 0x0F;
 	uint8_t value = chip8->registers[Vx];
@@ -578,7 +580,7 @@ void chip8_LD_Fx33(struct CHIP8 *chip8, uint16_t opcode)
  * @param chip8 
  * @param opcode
  */
-void chip8_LD_Fx55(struct CHIP8 *chip8, uint16_t opcode)
+void OP_Fx55(struct CHIP8 *chip8, uint16_t opcode)
 {
 	uint8_t Vx = (uint8_t)(opcode >> 8) & 0x0F;
 
@@ -593,7 +595,7 @@ void chip8_LD_Fx55(struct CHIP8 *chip8, uint16_t opcode)
  * @param chip8 
  * @param opcode
  */
-void chip8_LD_Fx65(struct CHIP8 *chip8, uint16_t opcode)
+void OP_Fx65(struct CHIP8 *chip8, uint16_t opcode)
 {
 	uint8_t Vx = (uint8_t)(opcode >> 8) & 0x0F;
 
@@ -601,4 +603,201 @@ void chip8_LD_Fx65(struct CHIP8 *chip8, uint16_t opcode)
 	{
 		chip8->registers[reg] = chip8->memory[chip8->index + reg];
 	}
+}
+
+
+
+
+
+
+
+
+/**
+ * @brief Switch function to handle '0' MSB opcodes
+ * 
+ * @param chip8 
+ * @param opcode 
+ */
+void OP_0_switch(struct CHIP8 *chip8, uint16_t opcode)
+{
+	switch (opcode & 0x000F)
+	{
+	case 0x0:
+		OP_00E0(chip8);
+		break;
+
+	case 0xE:
+		OP_00EE(chip8);
+		break;
+	
+	default:
+		break;
+	}
+}
+
+
+/**
+ * @brief Switch function to handle '8' MSB opcodes
+ * 
+ * @param chip8 
+ * @param opcode 
+ */
+void OP_8_switch(struct CHIP8 *chip8, uint16_t opcode)
+{
+	switch (opcode & 0x000F)
+	{
+	case 0x0:
+		OP_8xy0(chip8, opcode);
+		break;
+
+	case 0x1:
+		OP_8xy1(chip8, opcode);
+		break;
+
+	case 0x2:
+		OP_8xy2(chip8, opcode);
+		break;
+
+	case 0x3:
+		OP_8xy3(chip8, opcode);
+		break;
+
+	case 0x4:
+		OP_8xy4(chip8, opcode);
+		break;
+
+	case 0x5:
+		OP_8xy5(chip8, opcode);
+		break;
+
+	case 0x6:
+		OP_8xy6(chip8, opcode);
+		break;
+
+	case 0x7:
+		OP_8xy7(chip8, opcode);
+		break;
+
+	case 0xE:
+		OP_8xyE(chip8, opcode);
+		break;
+
+	default:
+		break;
+	}
+}
+
+/**
+ * @brief Switch function to handle 'E' MSB opcodes
+ * 
+ * @param chip8 
+ * @param opcode 
+ */
+void OP_E_switch(struct CHIP8 *chip8, uint16_t opcode)
+{
+	switch (opcode & 0x00FF)
+	{
+	case 0xA1:
+		OP_ExA1(chip8, opcode);
+		break;
+
+	case 0x9E:
+		OP_Ex9E(chip8, opcode);
+		break;
+
+	default:
+		break;
+	}
+}
+
+/**
+ * @brief Switch function to handle 'F' MSB opcodes
+ * 
+ * @param chip8 
+ * @param opcode 
+ */
+void OP_F_switch(struct CHIP8 *chip8, uint16_t opcode)
+{
+	switch (opcode & 0x00FF)
+	{
+	case 0x07:
+		OP_Fx07(chip8, opcode);
+		break;
+
+	case 0x0A:
+		OP_Fx0A(chip8, opcode);
+		break;
+
+	case 0x15:
+		OP_Fx15(chip8, opcode);
+		break;
+
+	case 0x18:
+		OP_Fx18(chip8, opcode);
+		break;
+
+	case 0x1E:
+		OP_Fx1E(chip8, opcode);
+		break;
+
+	case 0x29:
+		OP_Fx29(chip8, opcode);
+		break;
+
+	case 0x33:
+		OP_Fx33(chip8, opcode);
+		break;
+
+	case 0x55:
+		OP_Fx55(chip8, opcode);
+		break;
+
+	case 0x65:
+		OP_Fx65(chip8, opcode);
+		break;
+
+	default:
+		break;
+	}
+}
+
+
+
+
+
+/**
+ * @brief Array of function pointers.
+ * 
+ */
+void (*opcode_MSB[])(struct CHIP8 *chip8, uint16_t opcode) = 
+{
+	OP_0_switch,
+	OP_1nnn,
+	OP_2nnn,
+	OP_3xkk,
+	OP_4xkk,
+	OP_5xy0,
+	OP_6xkk,
+	OP_7xkk,
+	OP_8_switch,
+	OP_9xy0,
+	OP_Annn,
+	OP_Bnnn,
+	OP_Cxkk,
+	OP_Dxyn,
+	OP_E_switch,
+	OP_F_switch
+};
+
+
+/**
+ * @brief Switch function to handle different opcodes based on MSB.
+ * 
+ * @param chip8 
+ * @param opcode 
+ */
+void OP_MSB_switch(struct CHIP8 *chip8, uint16_t opcode)
+{
+	uint8_t MSB = (uint8_t)opcode >> 12;
+	(*opcode_MSB[MSB])(chip8, opcode);
 }

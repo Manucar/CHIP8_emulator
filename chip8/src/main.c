@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <time.h>
 
-#include "chip8_defines.h"
+//#include "chip8_defines.h"
+#include "op_codes.h"
 
 // Font set required (5x4 pixel each)
 uint8_t fontset[FONTSET_SIZE] =
