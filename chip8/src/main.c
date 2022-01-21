@@ -1,5 +1,12 @@
 #include <stdio.h>
 #include <time.h>
+#include <string.h>
+
+
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_timer.h>
+
 
 //#include "chip8_defines.h"
 #include "op_codes.h"
@@ -84,23 +91,66 @@ void load_rom(char *rom_path, struct CHIP8 *chip8){
 		// Start inserting to a valid memory area
 		chip8->memory[START_ADDRESS + bytes_read] = read_byte[0];
 
-		printf("%x\n", chip8->memory[START_ADDRESS + bytes_read]);
+		//printf("%x\n", chip8->memory[START_ADDRESS + bytes_read]);
 		bytes_read++;
 	}
 	
-	printf("bytes read = %d",bytes_read);
+	//printf("bytes read = %d",bytes_read);
 	
 	fclose(fptr);
 }
 
+
+uint16_t fetch(struct CHIP8 *chip8)
+{
+	uint8_t first_byte = chip8->memory[chip8->pc];
+	uint8_t second_byte = chip8->memory[chip8->pc + 1];
+	uint16_t op_code = (uint16_t) (first_byte << 8 | second_byte);
+	printf("%x\n", op_code);
+
+	chip8->pc+=2;
+	return op_code;
+}
+
+
+void decode_execute(struct CHIP8 *chip8, uint16_t op_code)
+{
+	OP_MSB_switch(chip8, op_code);
+}
+
+
 int main(int argc, char *argv[])
 {
 	struct CHIP8 chip8;
+	uint16_t op_code;
 	
 	init_chip8(&chip8);
 
 	// Load given ROM into memory area
 	load_rom(argv[1], &chip8);
 	
+	/*
+	for(uint16_t i = 0; i < 10; i++)
+	{
+		op_code = fetch(&chip8);
+		decode_execute(&chip8, op_code);
+	}
+	*/
+
+
+	// retutns zero on success else non-zero
+    if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
+        printf("error initializing SDL: %s\n", SDL_GetError());
+    }
+    SDL_Window* win = SDL_CreateWindow("GAME",
+                                       SDL_WINDOWPOS_CENTERED,
+                                       SDL_WINDOWPOS_CENTERED,
+                                       1000, 1000, 0);
+
+	for(;;)
+	{
+
+	}
+
     return 0;
 }

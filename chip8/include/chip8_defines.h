@@ -3,7 +3,6 @@
 
 #include <stdint.h>
 #include <stdlib.h>
-#include <string.h>
 
 #define START_ADDRESS 0x200
 #define FONTSET_START_ADDRESS 0x50

@@ -1,5 +1,7 @@
 #include "op_codes.h"
 #include "chip8_defines.h"
+#include <string.h>
+#include <stdio.h>
 
 
 /**
@@ -10,6 +12,7 @@
 void OP_00E0(struct CHIP8 *chip8)
 {
 	memset(chip8->video, 0, sizeof(chip8->video));
+	printf("CLS!!");
 }
 
 /**
@@ -110,6 +113,7 @@ void OP_6xkk(struct CHIP8 *chip8, uint16_t opcode)
 	uint8_t value = (uint8_t)(opcode & 0x00FF);
 
 	chip8->registers[Vx] = value;
+	printf("600C,");
 }
 
  /**
@@ -606,11 +610,30 @@ void OP_Fx65(struct CHIP8 *chip8, uint16_t opcode)
 }
 
 
-
-
-
-
-
+/**
+ * @brief Array of function pointers that works as a look up table to
+ * speed up the opcode decoding instead of a big amount of switch statement.
+ * 
+ */
+void (*opcode_MSB[])(struct CHIP8 *chip8, uint16_t opcode) = 
+{
+	OP_0_switch,
+	OP_1nnn,
+	OP_2nnn,
+	OP_3xkk,
+	OP_4xkk,
+	OP_5xy0,
+	OP_6xkk,
+	OP_7xkk,
+	OP_8_switch,
+	OP_9xy0,
+	OP_Annn,
+	OP_Bnnn,
+	OP_Cxkk,
+	OP_Dxyn,
+	OP_E_switch,
+	OP_F_switch
+};
 
 /**
  * @brief Switch function to handle '0' MSB opcodes
@@ -761,35 +784,6 @@ void OP_F_switch(struct CHIP8 *chip8, uint16_t opcode)
 	}
 }
 
-
-
-
-
-/**
- * @brief Array of function pointers.
- * 
- */
-void (*opcode_MSB[])(struct CHIP8 *chip8, uint16_t opcode) = 
-{
-	OP_0_switch,
-	OP_1nnn,
-	OP_2nnn,
-	OP_3xkk,
-	OP_4xkk,
-	OP_5xy0,
-	OP_6xkk,
-	OP_7xkk,
-	OP_8_switch,
-	OP_9xy0,
-	OP_Annn,
-	OP_Bnnn,
-	OP_Cxkk,
-	OP_Dxyn,
-	OP_E_switch,
-	OP_F_switch
-};
-
-
 /**
  * @brief Switch function to handle different opcodes based on MSB.
  * 
@@ -798,6 +792,7 @@ void (*opcode_MSB[])(struct CHIP8 *chip8, uint16_t opcode) =
  */
 void OP_MSB_switch(struct CHIP8 *chip8, uint16_t opcode)
 {
-	uint8_t MSB = (uint8_t)opcode >> 12;
+	uint8_t MSB = (uint8_t)(opcode >> 12);
 	(*opcode_MSB[MSB])(chip8, opcode);
+	printf("OPMSB : %d\n", MSB);
 }

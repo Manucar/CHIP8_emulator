@@ -6,8 +6,6 @@
 /**
  * Function prototypes of all the Opcodes.
  */
-
-/*
 void OP_00E0(struct CHIP8 *chip8);
 void OP_00EE(struct CHIP8 *chip8);
 void OP_1nnn(struct CHIP8 *chip8, uint16_t opcode);
@@ -47,10 +45,7 @@ void OP_0_switch(struct CHIP8 *chip8, uint16_t opcode);
 void OP_8_switch(struct CHIP8 *chip8, uint16_t opcode);
 void OP_E_switch(struct CHIP8 *chip8, uint16_t opcode);
 void OP_F_switch(struct CHIP8 *chip8, uint16_t opcode);
-*/
-
-
-
+void OP_MSB_switch(struct CHIP8 *chip8, uint16_t opcode);
 
 
 #endif

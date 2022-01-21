@@ -1,30 +1,43 @@
-SRC_DIR := src
-OBJ_DIR := obj
-BIN_DIR := bin
+##### WORKING MAKEFILE WITH SDL #######
 
-EXE := $(BIN_DIR)/chip8_emulator
-SRC := $(wildcard $(SRC_DIR)/*.c)
-OBJ := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+# A simple Makefile for compiling small SDL projects
 
-CPPFLAGS := -Iinclude -MMD -MP
-CFLAGS   := -Wall
-LDFLAGS  := -Llib
-LDLIBS   := -lm
+# set the compiler
+#CC := clang
+
+# set the compiler flags
+CFLAGS := `sdl2-config --libs --cflags` -ggdb3 -O0 --std=c99 -Wall -lSDL2_image -lm -Iinclude
+# add header files here
+#HDRS := ../include/chip8_defines.h ../include/op_codes.h
+
+# add source files here
+SRCS := src/main.c src/op_codes.c
+
+# generate names of object files
+OBJS := $(SRCS:.c=.o)
+
+# name of executable
+EXEC := chip8_emulator
+
+# default recipe
+all: $(EXEC)
+ 
+showfont: showfont.c Makefile
+	$(CC) -o $@ $@.c $(CFLAGS) $(LIBS)
+
+glfont: glfont.c Makefile
+	$(CC) -o $@ $@.c $(CFLAGS) $(LIBS)
+
+# recipe for building the final executable
+$(EXEC): $(OBJS) Makefile
+	$(CC) -o $@ $(OBJS) $(CFLAGS)
+
+# recipe for building object files
+#$(OBJS): $(@:.o=.c) $(HDRS) Makefile
+#    $(CC) -o $@ $(@:.o=.c) -c $(CFLAGS)
+
+# recipe to clean the workspace
+clean:
+	rm -f $(EXEC) $(OBJS)
 
 .PHONY: all clean
-
-all: $(EXE)
-
-$(EXE): $(OBJ) | $(BIN_DIR)
-	$(CC) $(LDFLAGS) $^ $(LDLIBS) -o $@
-
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
-
-$(BIN_DIR) $(OBJ_DIR):
-	mkdir -p $@
-
-clean:
-	@$(RM) -rv $(BIN_DIR) $(OBJ_DIR)
-
--include $(OBJ:.o=.d)
