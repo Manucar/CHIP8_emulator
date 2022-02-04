@@ -11,6 +11,8 @@
 #define VIDEO_WIDTH 64
 #define VIDEO_HEIGHT 32
 
+#define VIDEO_SCALE 10
+
 /**
  * @brief CHIP8 structure
  * 

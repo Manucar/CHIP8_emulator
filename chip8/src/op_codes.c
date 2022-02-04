@@ -12,7 +12,6 @@
 void OP_00E0(struct CHIP8 *chip8)
 {
 	memset(chip8->video, 0, sizeof(chip8->video));
-	printf("CLS!!");
 }
 
 /**
@@ -113,7 +112,6 @@ void OP_6xkk(struct CHIP8 *chip8, uint16_t opcode)
 	uint8_t value = (uint8_t)(opcode & 0x00FF);
 
 	chip8->registers[Vx] = value;
-	printf("600C,");
 }
 
  /**
@@ -340,12 +338,12 @@ void OP_Cxkk(struct CHIP8 *chip8, uint16_t opcode)
  */
 void OP_Dxyn(struct CHIP8 *chip8, uint16_t opcode)
 {
-	uint8_t Vx = (uint8_t)(opcode >> 8) & 0x0F;
-	uint8_t Vy = (uint8_t)(opcode & 0x00F0);
-	uint8_t n = (uint8_t)(opcode & 0x000F);
+	uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+	uint8_t Vy = (opcode & 0x00F0u) >> 4u;
+	uint8_t n = opcode & 0x000Fu;
 
 	uint8_t read_sprite;
-	uint8_t pixel_pos;
+	uint32_t pixel_pos;
 
 	// Set VF register to 0 for no collision
 	chip8->registers[0xF] = 0;
@@ -360,13 +358,13 @@ void OP_Dxyn(struct CHIP8 *chip8, uint16_t opcode)
 		{
 			// Vx and Vy initial coords are added with current row and col values retrieved from the current sprite
 			// bytes and bit position, the modulo handles the position rollover on the screen
-			pixel_pos = (((Vy + row) % 32) * 64) + ((Vx + col) % 64);
+			pixel_pos = (((chip8->registers[Vy] + row) % VIDEO_HEIGHT) * VIDEO_WIDTH) + ((chip8->registers[Vx] + col) % VIDEO_WIDTH);
 
 			// Check if the bit is 1 or 0 starting from the MSB
 			if ((read_sprite >> (7 - col)) & 0x01)
 			{
 				// Check if the bit is already set -> collision
-				if (chip8->video[pixel_pos] == 1)
+				if (chip8->video[pixel_pos] == 0xFFFFFFFF)
 				{
 					chip8->registers[0xF] = 1;
 				}
@@ -794,5 +792,4 @@ void OP_MSB_switch(struct CHIP8 *chip8, uint16_t opcode)
 {
 	uint8_t MSB = (uint8_t)(opcode >> 12);
 	(*opcode_MSB[MSB])(chip8, opcode);
-	printf("OPMSB : %d\n", MSB);
 }
