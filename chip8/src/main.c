@@ -3,13 +3,9 @@
 #include <string.h>
 
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_timer.h>
-
-
 //#include "chip8_defines.h"
 #include "op_codes.h"
+#include "sdl.h"
 
 // Font set required (5x4 pixel each)
 uint8_t fontset[FONTSET_SIZE] =
@@ -105,12 +101,25 @@ uint16_t fetch(struct CHIP8 *chip8)
 	uint8_t first_byte = chip8->memory[chip8->pc];
 	uint8_t second_byte = chip8->memory[chip8->pc + 1];
 	uint16_t op_code = (uint16_t) (first_byte << 8 | second_byte);
-	printf("opcode = %x\n", op_code);
-    printf("PC = %d\n", chip8->pc);
+	//printf("opcode = %x\n", op_code);
+    //printf("PC = %d\n", chip8->pc);
+
+    
 
 	chip8->pc+=2;
-  
 
+    // Decrement the delay timer if it's been set
+	if (chip8->delayTimer > 0)
+	{
+		--chip8->delayTimer;
+	}
+
+	// Decrement the sound timer if it's been set
+	if (chip8->soundTimer > 0)
+	{
+		--chip8->soundTimer;
+	}
+  
 	return op_code;
 }
 
@@ -143,22 +152,6 @@ void print_register(struct CHIP8 *chip8)
 }
 
 
-void set_pixel(SDL_Surface *surface, int x, int y, uint32_t pixel)
-{
-    uint32_t * const target_pixel = (uint32_t *) ((uint8_t *) surface->pixels + y * surface->pitch + x * surface->format->BytesPerPixel);
-    *target_pixel = pixel;
-}
-
-void update_pixels(struct CHIP8 *chip8, SDL_Surface *surface)
-{
-    for(uint16_t y = 0; y < VIDEO_HEIGHT; y++)
-    {
-        for(uint16_t x = 0; x < VIDEO_WIDTH; x++)
-        {
-            set_pixel(surface, x, y, chip8->video[y * VIDEO_WIDTH + x ]);
-        }
-    }
-}
 
 int main(int argc, char *argv[])
 {
@@ -170,154 +163,29 @@ int main(int argc, char *argv[])
 	// Load given ROM into memory area
 	load_rom(argv[1], &chip8);
 	
-    uint16_t counter = 0;
-
 	
-	for(uint16_t i = 0; i < 32; i++)
+	struct SDL_Struct sdl = sdl_init();
+    
+    uint16_t video_pitch = sizeof(chip8.video[0]) * VIDEO_WIDTH;
+    uint8_t quit = 0;
+    while (!quit)
 	{
-		op_code = fetch(&chip8);
-        print_register(&chip8);
+
+        op_code = fetch(&chip8);
+        //print_register(&chip8);
 		decode_execute(&chip8, op_code);
-        print_video_memory(&chip8);
-        printf("\ncounter = %d\n", counter);
-        counter++;
-	}
-	
-    
-	// retutns zero on success else non-zero
-    if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
-        printf("error initializing SDL: %s\n", SDL_GetError());
-    }
-    SDL_Window* win = SDL_CreateWindow("GAME",
-                                       SDL_WINDOWPOS_CENTERED,
-                                       SDL_WINDOWPOS_CENTERED,
-                                       VIDEO_WIDTH * VIDEO_SCALE, VIDEO_HEIGHT * VIDEO_SCALE, 0);
+        //print_video_memory(&chip8);
+        
+		quit = sdl_process_input(chip8.keypad);
 
-	// triggers the program that controls
-    // your graphics hardware and sets flags
-    uint32_t render_flags = SDL_RENDERER_ACCELERATED;
- 
-    // creates a renderer to render our images
-    SDL_Renderer* rend = SDL_CreateRenderer(win, -1, render_flags);
- 
-    // creates a surface to load an image into the main memory
-    SDL_Surface* surface;
- 
-    // please provide a path for your image
-    surface = IMG_Load("/home/manucar/Pictures/tree.png");
- 
-    // loads image to our graphics hardware memory.
-    SDL_Texture* tex = SDL_CreateTextureFromSurface(rend, surface);
- 
-    // clears main-memory
-    SDL_FreeSurface(surface);
- 
-    // let us control our image position
-    // so that we can move it with our keyboard.
-    SDL_Rect dest;
- 
-    // connects our texture with dest to control position
-    SDL_QueryTexture(tex, NULL, NULL, &dest.w, &dest.h);
- 
-    // adjust height and width of our image box.
-    dest.w /= 6;
-    dest.h /= 6;
- 
-    // sets initial x-position of object
-    dest.x = (1000 - dest.w) / 2;
- 
-    // sets initial y-position of object
-    dest.y = (1000 - dest.h) / 2;
- 
-    // controls annimation loop
-    int close = 0;
- 
-    // speed of box
-    int speed = 1000;
-    
-
-    // annimation loop
-    while (!close) {
-        SDL_Event event;
-
-        //update_pixels(&chip8, surface);
- 
-        // Events management
-        while (SDL_PollEvent(&event)) {
-            switch (event.type) {
- 
-            case SDL_QUIT:
-                // handling of close button
-                close = 1;
-                break;
- 
-            case SDL_KEYDOWN:
-                // keyboard API for key pressed
-                switch (event.key.keysym.scancode) {
-                case SDL_SCANCODE_W:
-                case SDL_SCANCODE_UP:
-                    dest.y -= speed / 30;
-                    break;
-                case SDL_SCANCODE_A:
-                case SDL_SCANCODE_LEFT:
-                    dest.x -= speed / 30;
-                    break;
-                case SDL_SCANCODE_S:
-                case SDL_SCANCODE_DOWN:
-                    dest.y += speed / 30;
-                    break;
-                case SDL_SCANCODE_D:
-                case SDL_SCANCODE_RIGHT:
-                    dest.x += speed / 30;
-                    break;
-                default:
-                    break;
-                }
-            }
-        }
- 
-        // right boundary
-        if (dest.x + dest.w > 1000)
-            dest.x = 1000 - dest.w;
- 
-        // left boundary
-        if (dest.x < 0)
-            dest.x = 0;
- 
-        // bottom boundary
-        if (dest.y + dest.h > 1000)
-            dest.y = 1000 - dest.h;
- 
-        // upper boundary
-        if (dest.y < 0)
-            dest.y = 0;
- 
-        // clears the screen
-        SDL_RenderClear(rend);
-        SDL_RenderCopy(rend, tex, NULL, &dest);
- 
-        // triggers the double buffers
-        // for multiple rendering
-        SDL_RenderPresent(rend);
+        sdl_update_texture(sdl.rend, sdl.tex, chip8.video, video_pitch);
  
         // calculates to 60 fps
-        SDL_Delay(1000 / 60);
+        //SDL_Delay(1000 / 60);
     }
- 
-    // destroy texture
-    SDL_DestroyTexture(tex);
- 
-    // destroy renderer
-    SDL_DestroyRenderer(rend);
- 
-    // destroy window
-    SDL_DestroyWindow(win);
-     
-    // close SDL
-    SDL_Quit();
-
     
- 
+    sdl_destroy(&sdl);
+
     return 0;
 	
 }

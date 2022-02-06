@@ -11,7 +11,7 @@ CFLAGS := `sdl2-config --libs --cflags` -ggdb3 -O0 --std=c99 -Wall -lSDL2_image 
 #HDRS := ../include/chip8_defines.h ../include/op_codes.h
 
 # add source files here
-SRCS := src/main.c src/op_codes.c
+SRCS := src/main.c src/op_codes.c src/sdl.c
 
 # generate names of object files
 OBJS := $(SRCS:.c=.o)
